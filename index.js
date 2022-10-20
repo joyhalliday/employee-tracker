@@ -18,7 +18,6 @@ db.connect(err => {
 
 questionsArray = [
     {
-        //name, mssage, type (choices if list)
         name: "doNext",
         message: "What would you like to do next?",
         type: "list",
@@ -37,14 +36,20 @@ function init() {
             db.query(`select * from roles`, (err, results) => {
                 console.table(results)
             })
-        } else if(answer.doNext === "view all roles") {
-            db.query(`select * from roles`, (err, results) => {
+        } else if(answer.doNext === "view all employees") {
+            db.query(`select * from employee`, (err, results) => {
                 console.table(results)
             })
-        }
-        else if(answer.doNext === "add a department") {
+        } else if(answer.doNext === "add a department") {
         addDepartment();
+        }  else if(answer.doNext === "add a role") {
+        addRole();
+        } else if(answer.doNext === "add an employee") {
+        addEmployee();
+        } else if(answer.doNext === "update an employee role") {
+        updateRole();
         }
+
     })
 }
 function addDepartment() {
@@ -56,6 +61,94 @@ function addDepartment() {
         }
     ]) .then(answer => {
         db.query(`insert into department (name) values('${answer.newDept}')`, (err, results) => {
+            if(err) throw(err)
+            console.table(results)
+        })
+    })
+}
+function addRole() {
+    inquirer.prompt([
+        {
+            name: "newRole",
+            message: "What is the new role?",
+            type: "input"
+        },
+        {
+            name: "newRoleSalary",
+            message: "What is the new role salary?",
+            type: "input"
+        },
+        {
+            name: "newRoleDept",
+            message: "What is the department of the new role?",
+            type: "input"
+        }
+    ]) .then(answer => {
+        db.query('INSERT INTO roles VALUES ?',
+        {
+            title: answer.newRole,
+            salary: answer.newRoleSalary,
+            department_id: answer.newRoleDept
+        }, (err, results) => {
+            if(err) throw(err)
+            console.table(results)
+        })
+    })
+}
+function addEmployee() {
+    inquirer.prompt([
+        {
+            name: "newEmployeeFn",
+            message: "What is the new employee's first name?",
+            type: "input"
+        },
+        {
+            name: "newEmployeeLn",
+            message: "What is the new employee's last name?",
+            type: "input"
+        },
+        {
+            name: "newEmployeeRole",
+            message: "What is the new employee's role?",
+            type: "input"
+        },
+        {
+            name: "newEmployeeManager",
+            message: "Who is the new employee's manager?",
+            type: "input"
+        }
+    ]) .then(answer => {
+        db.query(`insert into employee (first_name, last_name, role_id, manager_id) values('${answer.newEmployeeFn}' '${answer.newEmployeeLn}' '${answer.newEmployeeRole}' '${answer.newEmployeeManager}')`, (err, results) => {
+            if(err) throw(err)
+            console.table(results)
+        })
+    })
+}
+function updateRole() {
+    inquirer.prompt([
+        {
+            name: "updateEmployee",
+            message: "Who is the employee you would like to update the role for?",
+            type: "list",
+            choices: [employee]
+        },
+        {
+            name: "updateRole",
+            message: "What is the role?",
+            type: "input"
+        },
+        {
+            name: "updateRoleId",
+            message: "What is the new role ID?",
+            type: "input"
+        },
+        {
+            name: "updateManagerId",
+            message: "What is the new manager ID?",
+            type: "input"
+        }
+    ]) .then(answer => {
+        db.query(`insert into employee (first_name, last_name, role_id, manager_id) values('${answer.updateEmployee}, ${answer.updateRole}, ${answer.updateRoleId}, ${answer.updateManagerId}')`, (err, results) => {
             if(err) throw(err)
             console.table(results)
         })
