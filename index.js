@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-// require('console.table');
+const table = require('console.table');
 
 
 const db = mysql.createConnection(
@@ -84,12 +84,7 @@ function addRole() {
             type: "input"
         }
     ]) .then(answer => {
-        db.query('INSERT INTO roles VALUES ?',
-        {
-            title: answer.newRole,
-            salary: answer.newRoleSalary,
-            department_id: answer.newRoleDept
-        }, (err, results) => {
+        db.query(`INSERT INTO roles (title, salary, department_id) VALUES(' ${answer.newRole}, ${answer.newRoleSalary}, ${answer.newRoleDept}')`, (err, results) => {
             if(err) throw(err)
             console.table(results)
         })
@@ -130,7 +125,7 @@ function updateRole() {
             name: "updateEmployee",
             message: "Who is the employee you would like to update the role for?",
             type: "list",
-            choices: [employee]
+            choices: ["Homer Simpson", "Ned Flanders", "Clancy Wiggam", "Selma Bouvier", "Seymour Skinner", "Lenny Leonard", "Carl Carlson", "Barney Gumble", "Helen Lovejoy" ]
         },
         {
             name: "updateRole",
